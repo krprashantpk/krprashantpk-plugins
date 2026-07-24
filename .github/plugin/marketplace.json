@@ -1,0 +1,11 @@
+{
+  "name": "copilot-plugins",
+  "owner": {
+    "name": "krprashantpk"
+  },
+  "metadata": {
+    "description": "Personal collection of GitHub Copilot agent plugins by krprashantpk.",
+    "version": "0.1.0"
+  },
+  "plugins": []
+}
