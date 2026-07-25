@@ -33,7 +33,7 @@ Code-Shift reuses an already-authenticated session per platform. Sign in first w
 Install from the marketplace this repo publishes, then describe your migration in natural language:
 
 ```sh
-copilot plugin install code-shift@copilot-plugins
+copilot plugin install code-shift@krprashantpk-plugins
 ```
 
 - **Skills** — describe the move in natural language; the skills auto-trigger. Each resource type has its own **self-contained** skill (full guardrails, workflow, and platform commands): `migrate-repos`, `migrate-pull-requests`, `migrate-branch-policies`, `migrate-pipelines`, `migrate-issues`. Example: *"Migrate my Azure DevOps repo and PRs to GitHub."*

@@ -1,4 +1,4 @@
-# copilot-plugins
+# krprashantpk-plugins
 
 A **GitHub Copilot agent-plugin marketplace** — a Git repository that contains a `marketplace.json` catalog describing one or more Copilot agent plugins. This repo is the catalog itself; consumers register it once and can then browse and install any plugin it lists.
 
@@ -8,7 +8,7 @@ A **GitHub Copilot agent-plugin marketplace** — a Git repository that contains
 
 A marketplace is just a Git repo with a `marketplace.json` manifest at a recognized location (here: [.github/plugin/marketplace.json](.github/plugin/marketplace.json)). The manifest declares:
 
-- `name` — the kebab-case registration key users type after `@` (here: `copilot-plugins`).
+- `name` — the kebab-case registration key users type after `@` (here: `krprashantpk-plugins`).
 - `owner` — who publishes the marketplace.
 - `metadata` — human-readable description and marketplace version.
 - `plugins` — the list of plugins the marketplace offers (empty for now).
@@ -19,18 +19,18 @@ A marketplace is just a Git repo with a `marketplace.json` manifest at a recogni
 
 ```sh
 # Add the marketplace by its GitHub owner/repo
-/plugin marketplace add krprashantpk/copilot-plugins
+/plugin marketplace add krprashantpk/krprashantpk-plugins
 
 # Browse the plugins it offers (by the marketplace name)
-/plugin marketplace browse copilot-plugins
+/plugin marketplace browse krprashantpk-plugins
 
 # Install a specific plugin from this marketplace
-/plugin install <plugin>@copilot-plugins
+/plugin install <plugin>@krprashantpk-plugins
 ```
 
 ### VS Code
 
-1. Add `"krprashantpk/copilot-plugins"` to the `chat.plugins.marketplaces` setting.
+1. Add `"krprashantpk/krprashantpk-plugins"` to the `chat.plugins.marketplaces` setting.
 2. Open the Extensions view and browse `@agentPlugins` to discover and install plugins from registered marketplaces.
 
 ## Adding a new plugin
