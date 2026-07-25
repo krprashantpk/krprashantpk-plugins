@@ -1,0 +1,23 @@
+{
+  "name": "code-shift",
+  "description": "Guided, any-direction migration of repositories, pull/merge requests, branch policies, pipelines, and issues across Azure DevOps, GitHub, and GitLab. Every run starts with a read-only dry-run preview, migrates only the resource types you select, and asks for explicit confirmation before each destructive change. No PATs — it reuses your existing az / gh / glab CLI and MCP sessions.",
+  "version": "0.1.0",
+  "author": {
+    "name": "krprashantpk"
+  },
+  "license": "MIT",
+  "keywords": [
+    "migration",
+    "azure-devops",
+    "github",
+    "gitlab",
+    "devops",
+    "repositories",
+    "pull-requests",
+    "pipelines",
+    "issues",
+    "dry-run"
+  ],
+  "skills": "skills/",
+  "mcpServers": "mcp.json"
+}

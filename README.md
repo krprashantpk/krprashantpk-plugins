@@ -2,7 +2,7 @@
 
 A **GitHub Copilot agent-plugin marketplace** — a Git repository that contains a `marketplace.json` catalog describing one or more Copilot agent plugins. This repo is the catalog itself; consumers register it once and can then browse and install any plugin it lists.
 
-> Status: catalog scaffolding only. The `plugins` array in [.github/plugin/marketplace.json](.github/plugin/marketplace.json) is currently empty — no plugins ship yet.
+> Status: shipping. The `plugins` array in [.github/plugin/marketplace.json](.github/plugin/marketplace.json) currently offers one plugin: **code-shift** (see [plugins/code-shift](plugins/code-shift)).
 
 ## What is a Copilot plugin marketplace?
 
@@ -95,7 +95,7 @@ Keeping the two in sync ensures consumers pick up the new release.
 │   └── plugin/
 │       └── marketplace.json   # Marketplace catalog manifest (recognized location)
 ├── plugins/
-│   └── .gitkeep               # Future home for monorepo-style plugins
+│   └── code-shift/            # Any-direction repo/PR/policy/pipeline/issue migration plugin
 ├── .gitignore
 ├── LICENSE                    # MIT
 └── README.md

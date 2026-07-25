@@ -7,5 +7,19 @@
     "description": "Personal collection of GitHub Copilot agent plugins by krprashantpk.",
     "version": "0.1.0"
   },
-  "plugins": []
+  "plugins": [
+    {
+      "name": "code-shift",
+      "description": "Guided, any-direction migration of repositories, pull/merge requests, branch policies, pipelines, and issues across Azure DevOps, GitHub, and GitLab. Read-only dry-run first, migrates only the resource types you select, and confirms every destructive action. No PATs.",
+      "version": "0.1.0",
+      "source": "plugins/code-shift",
+      "keywords": [
+        "migration",
+        "azure-devops",
+        "github",
+        "gitlab",
+        "devops"
+      ]
+    }
+  ]
 }

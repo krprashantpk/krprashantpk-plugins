@@ -1,0 +1,43 @@
+{
+  "inputs": [
+    {
+      "id": "code_shift_azure_devops_organization",
+      "type": "promptString",
+      "description": "Azure DevOps organization name (for example, contoso)"
+    }
+  ],
+  "mcpServers": {
+    "code-shift-github": {
+      "type": "http",
+      "url": "https://api.githubcopilot.com/mcp/",
+      "headers": {
+        "X-MCP-Toolsets": "context,repos,issues,pull_requests,labels,actions,git"
+      }
+    },
+    "code-shift-azure-devops": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@azure-devops/mcp",
+        "${input:code_shift_azure_devops_organization}",
+        "--authentication",
+        "azcli",
+        "-d",
+        "core",
+        "work",
+        "work-items",
+        "repositories",
+        "pipelines"
+      ]
+    },
+    "code-shift-gitlab": {
+      "type": "stdio",
+      "command": "glab",
+      "args": [
+        "mcp",
+        "serve"
+      ]
+    }
+  }
+}

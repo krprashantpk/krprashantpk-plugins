@@ -4,3 +4,6 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Brainstorm notes (local only)
+/brainstorm/
