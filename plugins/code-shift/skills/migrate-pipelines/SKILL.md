@@ -22,11 +22,12 @@ Move CI/CD pipeline definitions across Azure DevOps, GitHub Actions, and GitLab 
 | GitHub | `gh auth status` | `gh auth login` |
 | GitLab | `glab auth status` | `glab auth login` |
 
-If either side is not signed in, stop and ask the user to authenticate. Prefer the platform **CLI (with `*/api` REST passthrough) for writes** and the **MCP server for read/preview** — `code-shift-github`, `code-shift-azure-devops`, `code-shift-gitlab` (see `mcp.json`).
+If either side is not signed in, stop and ask the user to authenticate. Prefer the platform **CLI (with `*/api` REST passthrough)** for both reads and writes.
 
 ## Workflow
 
 1. **Preflight** — confirm the source and target coordinates and that both are authenticated. Pipeline files live in the repo (migrate the repository first, or read the source files directly).
+   - **Azure DevOps target needs org + project.** "Same name" only supplies the repo name. If the target is ADO and the org and/or project are unknown, **ask for them before the dry-run** — never guess.
 2. **Discover (read-only)** — locate the source pipeline definitions and inspect the target for existing pipeline files (see commands below).
 3. **Dry-run report** — write out each pipeline that would be translated to the target syntax, what cannot migrate cleanly (ADO Classic, unmapped tasks/actions), and the secret **names** the pipeline needs. Nothing is written. Stop for explicit approval.
 4. **Confirm & execute** — after approval, confirm committing each translated file, then commit it. On an existing pipeline file, offer **abort** or **override**; an override needs a second explicit confirmation.

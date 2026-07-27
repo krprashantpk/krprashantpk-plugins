@@ -18,17 +18,18 @@ Recreate issues (GitHub/GitLab) or work items (Azure DevOps) with their labels, 
 
 ## Workflow
 
-1. **Preflight.** Confirm the source and target coordinates (Azure DevOps `org/project/repo` · GitHub `owner/repo` · GitLab `group/project`) and confirm both platforms are authenticated.
+1. **Preflight.** Confirm the source and target coordinates (Azure DevOps `org/project/repo` · GitHub `owner/repo` · GitLab `group/project`) and confirm both platforms are authenticated. When the target is **Azure DevOps**, also query the project **process** (Basic/Agile/Scrum/CMMI) — it dictates the valid work-item **types and state values** used everywhere downstream.
+   - **Azure DevOps target needs org + project.** "Same name" only supplies the repo name. If the target is ADO and the org and/or project are unknown, **ask for them before the dry-run** — never guess.
 2. **Discover (read-only).** Enumerate labels and issues/work items on the source, then inspect the target for already-present labels/issues so nothing is duplicated. Recreate labels before issues.
 3. **Dry-run report.** Present what would be created, skipped, or cannot migrate faithfully, plus conflicts. Nothing is written, so stop for explicit approval.
 4. **Confirm & execute.** After approval, confirm each destructive write group (labels, then issues), then perform it. On a conflict, offer **abort** or **override**; an override needs a second explicit confirmation naming exactly what will be replaced.
 5. **Verify & summarize.** Re-read the target, compare counts to the source, and list manual follow-ups.
 
-Prefer the platform **CLI (with `*/api` REST passthrough) for writes** and the **MCP server for read/preview** — `code-shift-github`, `code-shift-azure-devops`, `code-shift-gitlab` (see `mcp.json`).
+Prefer the platform **CLI (with `*/api` REST passthrough)** for both reads and writes.
 
 ## Fidelity limit (surface in the dry-run)
 
-Recreated issues/work items post as the **authenticated user** with new timestamps. Prefix each with the original author and date, e.g. `> Originally created by @alice on 2025-03-02`. Cross-item links (`#123`) may need re-mapping to the new target ids.
+Recreated issues/work items post as the **authenticated user** with new timestamps — original authorship can't be restored. Record the original author/date/link as a **comment** on the recreated item (ADO discussion via `az boards work-item update --discussion`, `gh issue comment`, `glab issue note`) rather than prefixing the description, so the description stays the clean original body; the comment itself still posts as the authenticated user. Cross-item links (`#123`) may need re-mapping to the new target ids.
 
 ## Model mapping
 
@@ -38,18 +39,24 @@ Recreated issues/work items post as the **authenticated user** with new timestam
 | Category | Work item type | Label | Label |
 | State | State (New/Active/Closed) | Open/Closed (+ state reason) | Open/Closed |
 | Grouping | Area/Iteration path | Milestone/Project | Milestone/Epic |
+| Hierarchy | Parent/child links (Epic→Feature→Story) | Issue ↔ sub-issue | Issue ↔ task / epic |
 
-Work item *types* have no direct GitHub/GitLab equivalent — map them to labels (e.g. `type:bug`) and note it.
+Work item *types* have no direct GitHub/GitLab equivalent, and the mapping is **direction-specific**:
+- **ADO → GitHub/GitLab:** map each work-item type to a label (e.g. `type:bug`) and note it.
+- **GitHub/GitLab → ADO:** the target has no free-form type, so promote **type-signal labels** (`Epic`, `User Story`, `Bug`) to ADO **types** and map the remaining labels to **tags**; restrict states to those the target **process** allows (query it first).
 
 ## Discover (read-only)
 
 - Labels: `az boards` (tags) · `gh label list` · `glab label list`.
 - Items: `az boards query --wiql ...` / `az boards work-item show` · `gh issue list --state all --json ...` · `glab issue list`.
+- Hierarchy: GitHub **native sub-issues** (`gh api repos/<owner>/<repo>/issues/<n>/sub_issues`) · ADO parent/child links · GitLab task/epic links — capture the authoritative parent→child map so the target hierarchy can be rebuilt.
+- ADO target: query the **process** (`az devops project show --query capabilities.processTemplate.templateName`) to know valid types/states.
 - Target: which issues/labels already exist (match by title)? Record conflicts to avoid duplicates.
 
 ## Dry-run entries
 
 - Will create: N labels, M issues/work items (with mapped types/states).
+- Will link: K parent/child relationships (from sub-issues / hierarchy).
 - Will skip: already-present labels/issues (idempotency).
 - Cannot migrate faithfully: authorship/timestamps, ADO work-item-type semantics, cross-links.
 
@@ -57,10 +64,13 @@ Work item *types* have no direct GitHub/GitLab equivalent — map them to labels
 
 1. **Labels first** (confirm the batch): `gh label create` · `glab label create` · ADO tags are created implicitly on work items.
 2. **Issues/work items** (confirm the batch):
-   - GitHub: `gh issue create --title "<t>" --body "<body + author note>" --label <l>`.
-   - GitLab: `glab issue create --title "<t>" --description "<body + author note>" --label <l>`.
-   - Azure DevOps: `az boards work-item create --type <T> --title "<t>" --description "<body + author note>"`.
+   - GitHub: `gh issue create --title "<t>" --body "<body>" --label <l>`.
+   - GitLab: `glab issue create --title "<t>" --description "<body>" --label <l>`.
+   - Azure DevOps: `az boards work-item create --type <T> --title "<t>" --description "<body>"` (`System.Description` is **HTML by default** — see the reference for the markdown option). Record the original author/date/link as a **comment**, not a description prefix (see *Fidelity limit*).
 3. Set closed state where the source item is closed (`gh issue close --reason ...`, `glab issue close`, ADO state update). Always set a state reason when closing.
+4. **Hierarchy** (confirm the batch): create **parents before children** so parent ids exist, keep a source→target id map, then add links — ADO `az boards work-item relation add --id <child> --relation-type parent --target-id <parent>`.
+
+**Bulk (> ~10 items) or hierarchy/rich-body migrations:** don't hand-run one-liners — generate an adaptable script and run it *inside* these gates (discover → present dry-run → confirm → execute → verify). For **GitHub → Azure DevOps** see [references/github-to-ado-script-template.md](references/github-to-ado-script-template.md), which covers the non-obvious mechanics: CLI escaping (`az.cmd %*`), `System.Description` HTML-vs-Markdown (`multilineFieldsFormat`), process-specific types/states, GitHub native sub-issues → ADO parent links, a persisted `GH#→ADO#` map (resumable/idempotent), and verification by direct id (WIQL lags).
 
 ## Cross-platform notes
 
@@ -69,4 +79,5 @@ Work item *types* have no direct GitHub/GitLab equivalent — map them to labels
 
 ## Verify
 
-- Compare target issue/label counts to the source; confirm states and labels applied. Report any items whose type/links were downgraded.
+- Compare target issue/label counts to the source; confirm states and labels applied, and that parent/child links were created. Report any items whose type/links were downgraded.
+- On **Azure DevOps**, `az boards query` (WIQL) can report **0 for several seconds** after writes (indexing lag) — verify by direct `az boards work-item show --id <n>` over the created id range, not WIQL.

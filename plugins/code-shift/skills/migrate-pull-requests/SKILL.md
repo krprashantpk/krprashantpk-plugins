@@ -19,12 +19,13 @@ Recreate open pull requests (GitHub/Azure DevOps) or merge requests (GitLab), in
 ## Workflow
 
 1. **Preflight.** Confirm the source and target coordinates (Azure DevOps `org/project/repo` · GitHub `owner/repo` · GitLab `group/project`), confirm both platforms are authenticated, and confirm the PR/MR branches already exist on the target (migrate the repository first if not).
+   - **Azure DevOps target needs org + project.** "Same name" only supplies the repo name. If the target is ADO and the org and/or project are unknown, **ask for them before the dry-run** — never guess.
 2. **Discover (read-only).** Enumerate open PRs/MRs and their comment threads on the source, then inspect the target for already-present PRs/MRs (match by source branch + title) so nothing is duplicated.
 3. **Dry-run report.** Present what would be created, skipped, or cannot migrate, plus conflicts and manual follow-ups. Nothing is written, so stop for explicit approval.
 4. **Confirm & execute.** After approval, confirm each destructive write group, then perform it. On a conflict, offer **abort** or **override**; an override needs a second explicit confirmation naming exactly what will be replaced.
 5. **Verify & summarize.** Re-read the target, compare it to the source, and list manual follow-ups.
 
-Prefer the platform **CLI (with `*/api` REST passthrough) for writes** and the **MCP server for read/preview** — `code-shift-github`, `code-shift-azure-devops`, `code-shift-gitlab` (see `mcp.json`).
+Prefer the platform **CLI (with `*/api` REST passthrough)** for both reads and writes.
 
 ## Fidelity limit (surface in the dry-run)
 
@@ -33,9 +34,9 @@ Recreated PRs/MRs and comments post as the **authenticated user**, not the origi
 ## Discover (read-only)
 
 - Source open PRs/MRs with source/target branches, title, body, and comments:
-  - Azure DevOps: `az repos pr list --status active`, `az repos pr show --id <id>`; MCP repositories domain.
-  - GitHub: `gh pr list --state open --json ...`, `gh pr view <n> --json comments`; MCP `pull_requests`.
-  - GitLab: `glab mr list`, `glab mr view <iid>`; MCP.
+  - Azure DevOps: `az repos pr list --status active`, `az repos pr show --id <id>`.
+  - GitHub: `gh pr list --state open --json ...`, `gh pr view <n> --json comments`.
+  - GitLab: `glab mr list`, `glab mr view <iid>`.
 - Target: which PRs/MRs already exist (match by source branch + title)? Record conflicts to avoid duplicates.
 
 ## Dry-run entries

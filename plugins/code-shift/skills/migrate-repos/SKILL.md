@@ -14,15 +14,37 @@ Move a Git repository and all its history, branches, tags, and large files betwe
 2. **Only what the user selected.** This skill migrates the repository (`repo`). Never expand into pull requests, issues, policies, or pipelines without asking.
 3. **Confirm every destructive action.** Report each write before performing it and get explicit confirmation.
 4. **Discover source and target first.** Verify the source exists and is migratable, and that the target has no existing data. If the target already has data, never auto-override — ask the user for explicit override confirmation.
-5. **No Personal Access Tokens.** Verify the required CLI tools are installed and already signed in. If either side is not signed in, stop and ask the user to authenticate. Reuse an existing signed-in session and verify both source and target are authenticated before doing anything.
+5. **No Personal Access Tokens.** Verify the required CLI tools are installed and already signed in. If either side is not signed in, stop and ask the user to authenticate. Reuse an existing signed-in session and verify both source and target are authenticated before doing anything. **A CLI sign-in is not a git-transport sign-in** — a working `az`/`gh`/`glab` session does not guarantee `git push` can authenticate. Resolve git-transport auth explicitly before any clone or push. See [Git-transport authentication] below.
+
+## Git-transport authentication
+
+Being signed into a CLI (`az`, `gh`, `glab`) authenticates *API* writes — it does **not** authenticate the `git` transport used by clone/fetch/push. Resolve git-transport auth explicitly, and ask the user which path to take, before any clone or push.
+
+- **CLI sign-in ≠ git-transport sign-in.** `az repos create`, `gh repo create`, or `glab` API calls can all succeed while `git push` still fails, because they use different credentials.
+- **Azure DevOps — do not push with an `az` bearer token.** An AAD access token (e.g. `az account get-access-token --resource 499b84ac-1321-427f-aa17-267ca6975798`) can return **403 even against the REST API** on MSA / personal-tenant-backed orgs, because the AAD identity does not map to the org — even though `az repos ...` writes with the *same* session succeed. This mismatch is misleading; do not chase it.
+- **Preferred ADO transport — ask the user first:**
+  - **SSH** — use when the user already has an SSH key registered on the target platform. Clone and push over the SSH URL (`git@ssh.dev.azure.com:...`).
+  - **Git Credential Manager** — otherwise, let GCM (`credential.helper=manager`) drive its interactive browser sign-in for the HTTPS remote. This is the reliable fallback.
+- Confirm with the user which transport (SSH vs. Git Credential Manager) to use before running any clone or push, and verify `git ls-remote <url>` succeeds on **both** source and target before proceeding.
 
 ## Workflow
 
-1. **Preflight.** Confirm the source and target coordinates (Azure DevOps `org/project/repo` · GitHub `owner/repo` · GitLab `group/project`), and confirm that both platforms are authenticated.
+1. **Preflight.** Confirm the source and target coordinates (Azure DevOps `org/project/repo` · GitHub `owner/repo` · GitLab `group/project`), resolve git-transport auth (see [Git-transport authentication]), and confirm that both platforms are authenticated.
+   - **Azure DevOps target needs org + project.** "Same name" only supplies the repo name. If the target is ADO and the org and/or project are unknown, **ask for them before the dry-run** — never guess.
+   - **Azure DevOps projects ship a default same-named repo.** A new ADO project auto-creates an empty repo named after the project, so listing repos may show an existing same-named repo. Confirm with the user whether to migrate **into that existing repo** or **create a new repo** named after the source repo before writing anything.
 2. **Discover & classify (read-only).** Enumerate branches, tags, LFS, and the default branch on the source, then inspect the target and **classify its state** — empty/new, shared-history-behind, or divergent/unrelated — to pick the matching reference document. See [Target state & reference routing] below.
 3. **Dry-run report.** Present the **case-specific** dry run report: what would be created, skipped, or cannot migrate, plus conflicts and manual follow-ups. Nothing is written, so stop for explicit approval.
 4. **Confirm & execute.** After approval, confirm each destructive write group, then perform it. On a conflict, offer **abort** or **override**; an override needs a second explicit confirmation naming exactly what will be replaced.
 5. **Verify & summarize.** Re-read the target, compare it to the source, and list manual follow-ups.
+
+## Unreachable or misconfigured source remote
+
+`git clone --mirror <source-url>` assumes the source remote is reachable. If the clone/fetch fails (dead, moved, or misconfigured remote) but a **complete local clone already exists**, that local clone can serve as the migration source — but only after proving it is complete and in sync:
+
+- **Non-shallow:** `git rev-parse --is-shallow-repository` must return `false` (a shallow clone is missing history and must not be used).
+- **In sync with tracking refs:** for each branch, `git rev-parse <branch>` must equal `git rev-parse <branch>@{upstream}` (or the last-fetched `origin/<branch>`), proving no un-fetched commits are missing.
+
+Only when **both** checks hold, migrate directly from the local clone (add the target as a remote and push from it). If either check fails, stop and ask the user — never migrate from a shallow or out-of-sync clone.
 
 ## Target state & reference routing
 

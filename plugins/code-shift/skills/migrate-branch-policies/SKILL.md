@@ -19,12 +19,13 @@ Map each platform's branch-rule model onto the target across Azure DevOps, GitHu
 ## Workflow
 
 1. **Preflight.** Confirm the source and target coordinates (Azure DevOps `org/project/repo` · GitHub `owner/repo` · GitLab `group/project`), confirm both platforms are authenticated, and confirm the protected branches already exist on the target (migrate the repository first if not).
+   - **Azure DevOps target needs org + project.** "Same name" only supplies the repo name. If the target is ADO and the org and/or project are unknown, **ask for them before the dry-run** — never guess.
 2. **Discover (read-only).** Read the source branch rules, then inspect the target's existing protection so nothing is silently overwritten.
 3. **Dry-run report.** Present each rule mapped to the target model, what cannot map, and conflicts. Nothing is written, so stop for explicit approval.
 4. **Confirm & execute.** After approval, confirm each destructive write group, then apply it. On existing target protection, offer **abort** or **override**; an override needs a second explicit confirmation naming exactly what will be replaced.
 5. **Verify & summarize.** Re-read the target protection, compare it to the source, and list anything downgraded or dropped.
 
-Prefer the platform **CLI (with `*/api` REST passthrough) for writes** and the **MCP server for read/preview** — `code-shift-github`, `code-shift-azure-devops`, `code-shift-gitlab` (see `mcp.json`).
+Prefer the platform **CLI (with `*/api` REST passthrough)** for both reads and writes.
 
 ## Model mapping (approximate)
 
@@ -41,7 +42,7 @@ Anything without a target equivalent → list under **Cannot migrate** in the dr
 
 ## Discover (read-only)
 
-- Azure DevOps: `az repos policy list --repository-id <id>`; MCP repositories (partial).
+- Azure DevOps: `az repos policy list --repository-id <id>`.
 - GitHub: `gh api repos/{o}/{r}/branches/{branch}/protection`.
 - GitLab: `glab api projects/:id/protected_branches`.
 

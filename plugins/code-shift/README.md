@@ -42,11 +42,10 @@ copilot plugin install code-shift@krprashantpk-plugins
 
 ```
 code-shift/
-├── plugin.json                              # Plugin manifest (name, version, skills path, mcpServers → mcp.json)
+├── plugin.json                              # Plugin manifest (name, version, skills path)
 ├── AGENTS.md                                # Primary instructions: identity, guardrails, work routing
 ├── architecture.md                          # Component + workflow diagrams
 ├── README.md                                # This file
-├── mcp.json                                 # MCP servers: code-shift-github / -azure-devops / -gitlab
 └── skills/                                   # One self-contained skill per resource type
     ├── migrate-repos/                        # repo skill (git mirror, branches, tags, LFS)
     │   ├── SKILL.md                          # workflow + target-state classification & routing
@@ -56,12 +55,15 @@ code-shift/
     ├── migrate-pull-requests/SKILL.md       # prs skill (PR/MR + comments)
     ├── migrate-branch-policies/SKILL.md     # policies skill (rule-model mapping)
     ├── migrate-pipelines/SKILL.md           # pipes skill (YAML translation, ADO Classic)
-    └── migrate-issues/SKILL.md              # issues skill (issues/work items + labels)
+    └── migrate-issues/                       # issues skill (issues/work items + labels)
+        ├── SKILL.md                          # workflow: process/type/state mapping, hierarchy, attribution
+        └── references/
+            └── github-to-ado-script-template.md  # GH→ADO bulk script (CLI escaping, sub-issues, resumable map)
 ```
 
 ## Tooling principle
 
-Default to the platform **CLI (with `*/api` REST passthrough) for writes**, and use the **MCP server for read / preview / dry-run**. Only native CLIs, native MCP servers, and REST APIs are used — no vendor "import into" engines, which are one-directional and mostly PAT-based.
+Default to the platform **CLI (with `*/api` REST passthrough)** for both reads and writes. Only native CLIs and REST APIs are used — no vendor "import into" engines, which are one-directional and mostly PAT-based.
 
 ## License
 

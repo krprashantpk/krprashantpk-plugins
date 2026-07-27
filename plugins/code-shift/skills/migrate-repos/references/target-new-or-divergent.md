@@ -48,6 +48,7 @@ OVERRIDE requires a second explicit confirmation naming exactly these refs.
 
 - In the new-target case, create the target repository as a completely empty repository and do not allow the host to auto-initialize it with a README, .gitignore, or license, because any seeded commit would turn the very first push into a divergent override that then has to be forced.
 - Create the empty target repository on whichever host is being used before any refs are pushed.
+- On Azure DevOps, a new project already ships an empty same-named repo, so reuse that repo or create a new one named after the source repo exactly as the user chose in preflight, rather than blindly creating a duplicate.
 - For an empty or new target, push every in-scope branch and tag with a plain non-force push, since the operation is purely additive and nothing already on the target can be lost.
 - For a divergent target, only proceed once the second explicit confirmation has been given, and then force-replace the target's refs while pruning any target-only branches and tags so the target ends up as an exact mirror of the source, keeping in mind that this step is destructive and effectively irreversible and must never happen silently.
 - Fetch all of the LFS content from the source before pushing, because mirror clones download blob content lazily, and then push that LFS content across to the target so the large files resolve.
