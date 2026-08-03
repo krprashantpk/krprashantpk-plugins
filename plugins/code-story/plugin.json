@@ -1,0 +1,18 @@
+{
+  "name": "code-story",
+  "description": "CodeStory turns backlog ideas into implemented, verified code through three focused stages: author the story, build a file-by-file technical plan, and execute the approved plan.",
+  "version": "0.1.0",
+  "author": {
+    "name": "krprashantpk"
+  },
+  "license": "MIT",
+  "keywords": [
+    "backlog",
+    "stories",
+    "planning",
+    "implementation",
+    "code",
+    "workflow"
+  ],
+  "skills": "skills/"
+}
