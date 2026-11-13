@@ -23,12 +23,14 @@
     },
     {
       "name": "code-story",
-      "description": "CodeStory turns backlog ideas into implemented, verified code through three focused stages: author the story, build a file-by-file technical plan, and execute the approved plan.",
-      "version": "0.1.0",
+      "description": "CodeStory searches remote work items, authors and exports backlog stories, agrees on high-level technical plans, and turns approved work items into implemented, verified code.",
+      "version": "0.3.0",
       "source": "plugins/code-story",
       "keywords": [
         "backlog",
         "stories",
+        "search",
+        "export",
         "planning",
         "implementation",
         "code"

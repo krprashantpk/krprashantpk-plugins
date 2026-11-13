@@ -7,3 +7,6 @@ Thumbs.db
 
 # Brainstorm notes (local only)
 /brainstorm/
+
+# Local backlog stories and technical plans
+/.backlog/

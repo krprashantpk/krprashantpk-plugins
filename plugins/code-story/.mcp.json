@@ -1,0 +1,19 @@
+{
+  "mcpServers": {
+    "code-story-github": {
+      "type": "http",
+      "url": "https://api.githubcopilot.com/mcp/",
+      "tools": ["*"]
+    },
+    "code-story-ado": {
+      "type": "http",
+      "url": "https://mcp.dev.azure.com/",
+      "tools": ["*"]
+    },
+    "code-story-jira": {
+      "type": "http",
+      "url": "https://mcp.atlassian.com/v2/mcp",
+      "tools": ["*"]
+    }
+  }
+}
