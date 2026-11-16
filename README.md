@@ -94,34 +94,20 @@ Keep each plugin version synchronized between its `plugin.json` and [.github/plu
 
 ## Coding standards instructions
 
-Repository-wide performance and async safety rules are automatically applied
-through [performance.instructions.md](.github/instructions/performance.instructions.md).
-They require non-blocking I/O wherever supported, deadlock prevention, bounded
-concurrency, and explicit flags for inefficient code encountered during a task.
-
-The [instructions](instructions) folder contains reusable coding standards:
+CodeStory packages all six shared instruction files in its [Copilot rules directory](plugins/code-story/com.github.copilot/rules). They are installed with the plugin rather than copied into a repository or user-profile instructions folder.
 
 | File | Scope |
 | --- | --- |
-| [python.instructions.md](instructions/python.instructions.md) | Python runtimes, dependencies, formatting, naming, types, functions, classes, imports, docstrings, and inline comments. |
-| [design-principal.instructions.md](instructions/design-principal.instructions.md) | Focused responsibilities, explicit collaboration, practical reuse, and predictable behavior. |
-| [configuration.instructions.md](instructions/configuration.instructions.md) | Explicit settings, validation, configured clients, and ownership boundaries. |
-| [architecture.instructions.md](instructions/architecture.instructions.md) | Package layout, component contracts, dependency direction, data integrity, and compatibility. |
-| [logging-and-exceptions.instructions.md](instructions/logging-and-exceptions.instructions.md) | Contextual Python logging, validation errors, exception propagation, and explicit failure outcomes. |
-| [documentation.instructions.md](instructions/documentation.instructions.md) | Root project documents, package and application README sections, Mermaid application flows, and package structure. |
+| [python.instructions.md](plugins/code-story/com.github.copilot/rules/python.instructions.md) | Python environments, dependencies, naming, types, models, docstrings, and inline comments. |
+| [design-principal.instructions.md](plugins/code-story/com.github.copilot/rules/design-principal.instructions.md) | Focused responsibilities, explicit collaboration, practical reuse, and predictable behavior. |
+| [environment-variables.instructions.md](plugins/code-story/com.github.copilot/rules/environment-variables.instructions.md) | Caller-supplied configuration, environment-variable ownership, and configured clients. |
+| [logging-and-exceptions.instructions.md](plugins/code-story/com.github.copilot/rules/logging-and-exceptions.instructions.md) | Python logging, contextual messages, and protection of sensitive information. |
+| [performance.instructions.md](plugins/code-story/com.github.copilot/rules/performance.instructions.md) | Non-blocking I/O, deadlock prevention, bounded concurrency, and explicit performance findings. |
+| [documentation.instructions.md](plugins/code-story/com.github.copilot/rules/documentation.instructions.md) | Project setup documentation, Mermaid application flows, and package structure. |
 
-These files are a reusable collection, not installed plugin content. The root
-`instructions/` folder is not a default workspace instruction-discovery location.
-To use them, copy the selected files into a target workspace's
-`.github/instructions/` folder or a VS Code user-profile instructions location.
-Some instructions include file-matching `applyTo` patterns or task-oriented
-descriptions so they can be loaded when relevant or attached explicitly. Add
-repository-specific path patterns where needed.
+CodeStory uses the Agent Plugins 1.0 manifest format. Skills and MCP servers use the portable `skills/` and `mcp.json` locations; instructions are Copilot-specific components under `com.github.copilot/rules/`. A compatible client and enabled plugin are required. The instruction contents and their existing `applyTo` patterns and descriptions are preserved; activation depends on those fields and the selected harness. See [rule verification](plugins/code-story/README.md#development-verification).
 
-Python docstrings and inline comments belong only in the Python instructions.
-Documentation instructions are for project documentation, not docstrings.
-The [standards mapping](brainstorm/common-standard.md) tracks the broader plan;
-the remaining instruction files have not been created.
+Repository-owned instructions remain a separate mechanism under `.github/instructions/`; the marketplace no longer keeps a second copy of these shared files there or in a root `instructions/` collection. Apply bundled rules alongside the target repository's instructions and surface conflicts rather than silently overriding either source.
 
 ## Project Structure
 
@@ -147,9 +133,11 @@ the remaining instruction files have not been created.
 │   │               ├── target-new-or-divergent.md            # New or divergent target handling
 │   │               └── target-shared-history.md              # Shared-history target handling
 │   └── code-story/                                           # Backlog-to-code workflow plugin
-│       ├── plugin.json                                       # CodeStory plugin manifest
-│       ├── .mcp.json                                         # Hosted GitHub, Azure DevOps, and Atlassian MCP connections
+│       ├── plugin.json                                       # Agent Plugins 1.0 manifest
+│       ├── mcp.json                                          # Hosted GitHub, Azure DevOps, and Atlassian MCP connections
 │       ├── README.md                                         # CodeStory installation and usage
+│       ├── com.github.copilot/
+│       │   └── rules/                                       # Sole location for the six shared instruction files
 │       └── skills/
 │           ├── code-story-work-item-search/                  # Chat-only remote work-item search
 │           │   ├── SKILL.md                                  # Shared provider-agnostic workflow
@@ -159,10 +147,12 @@ the remaining instruction files have not been created.
 │           ├── code-story-technical-plan/SKILL.md             # Technical planning workflow
 │           └── code-story-implementer/SKILL.md                 # Implementation and closeout workflow
 ├── .gitignore                                                # Local ignore rules
-├── architecture.md                                          # Marketplace and plugin architecture
+├── ARCHITECTURE.md                                           # Marketplace and plugin architecture
 ├── LICENSE                                                   # MIT license
 └── README.md                                                 # Marketplace setup and catalog
 ```
+
+See [ARCHITECTURE.md](ARCHITECTURE.md) for marketplace discovery and plugin component interactions.
 
 ## License
 

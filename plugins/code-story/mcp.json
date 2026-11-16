@@ -1,0 +1,17 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json",
+  "mcpServers": {
+    "code-story-github": {
+      "type": "streamable-http",
+      "url": "https://api.githubcopilot.com/mcp/"
+    },
+    "code-story-ado": {
+      "type": "streamable-http",
+      "url": "https://mcp.dev.azure.com/"
+    },
+    "code-story-jira": {
+      "type": "streamable-http",
+      "url": "https://mcp.atlassian.com/v2/mcp"
+    }
+  }
+}

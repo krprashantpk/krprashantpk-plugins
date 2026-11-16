@@ -105,24 +105,28 @@ Use online research when design choices need external evidence or recommendation
 ````markdown
 ## Work item
 
-* Source: <Workspace-relative source link, issue URL/identifier, or user-supplied text>
-* Plan status: Approved by the user
-
-<Brief problem statement and intended outcome.>
+- Source: <Relative document link, issue reference, or user-supplied request>
+- Plan status: Approved by the user
+- Approved on: <YYYY-MM-DD>
 
 ## Technical Implementation Plan
 
 ### Architecture and approach
 
-<Component responsibilities, interactions, data/control flow, key contracts, and any justified changes to existing code, boundaries, or folder structure.>
+<Responsibilities, contracts, data/control flow, affected components, reuse, and justified boundary or folder changes. Add a diagram only when useful.>
 
 ### Key decisions and trade-offs
 
-<Chosen approach, material alternatives, and rationale.>
+<Selected approach, material alternatives, rationale, and evidence.>
+
+### Implementation sequence
+
+- [ ] <Milestone: affected component, intended change, prerequisite, completion criterion>
+- [ ] <Next milestone, including directly affected documentation where relevant>
 
 ### Risks, assumptions, and deferred work
 
-<Material risks, assumptions accepted by the user, and explicit deferrals. State when none remain.>
+<Material risks, mitigations, accepted assumptions, open questions, and deferrals. Identify any question that still blocks implementation, or state none.>
 ````
 
 ## Response Format

@@ -7,7 +7,7 @@ description: Use when the user wants to execute, implement, build, or close out 
 
 Execute an approved technical plan end to end: make the code and documentation changes required by its architecture and acceptance outcomes, validate them, then record what was actually done.
 
-The workflow is project-agnostic. Follow the target repository's language, frameworks, tooling, and conventions rather than imposing bundled implementation defaults.
+The workflow is project-agnostic. Apply relevant bundled coding standards alongside the target repository's instructions, language, frameworks, tooling, and conventions. Surface conflicting guidance before making incompatible choices.
 
 ## Overview
 
@@ -80,7 +80,7 @@ No prior use of `code-story-author` is required. The source work item may be sup
 
 1. Implement only the approved approach, scope, and acceptance outcomes. Record out-of-scope discoveries rather than silently implementing them.
 2. Never mark work complete or closed with failing required checks or unverified in-scope acceptance outcomes. Record partial or blocked results honestly.
-3. Follow the target repository's instructions, language, frameworks, and tooling. Do not impose Python-specific or other cross-project defaults.
+3. Follow applicable bundled rules and the target repository's instructions, language, frameworks, and tooling. Apply language-specific rules only to relevant work and ask the user to resolve conflicting guidance.
 4. Modify only implementation-related files and the selected local closeout record. Preserve the approved plan content and do not modify an external tracker or the source work item of a standalone plan.
 5. Ask about material design or scope ambiguity; do not treat ordinary implementation detail as a missing architectural plan.
 

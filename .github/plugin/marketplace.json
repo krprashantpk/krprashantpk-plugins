@@ -23,8 +23,8 @@
     },
     {
       "name": "code-story",
-      "description": "CodeStory searches remote work items, authors and exports backlog stories, agrees on high-level technical plans, and turns approved work items into implemented, verified code.",
-      "version": "0.3.0",
+      "description": "CodeStory searches remote work items, authors and exports backlog stories, agrees on high-level technical plans, and turns approved work items into implemented, verified code. Includes shared coding standards.",
+      "version": "0.4.0",
       "source": "plugins/code-story",
       "keywords": [
         "backlog",

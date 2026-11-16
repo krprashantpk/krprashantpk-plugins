@@ -1,7 +1,8 @@
 {
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "code-story",
-  "description": "CodeStory searches remote work items, authors and exports backlog stories, agrees on high-level technical plans, and turns approved work items into implemented, verified code.",
-  "version": "0.3.0",
+  "description": "CodeStory searches remote work items, authors and exports backlog stories, agrees on high-level technical plans, and turns approved work items into implemented, verified code. Includes shared coding standards.",
+  "version": "0.4.0",
   "author": {
     "name": "krprashantpk"
   },
@@ -15,7 +16,5 @@
     "implementation",
     "code",
     "workflow"
-  ],
-  "skills": "skills/",
-  "mcpServers": ".mcp.json"
+  ]
 }

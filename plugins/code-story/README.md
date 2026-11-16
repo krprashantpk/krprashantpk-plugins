@@ -55,9 +55,17 @@ flowchart LR
 
 For an existing installation, run `/plugin update code-story`, then start a new session.
 
+## Bundled instruction rules
+
+CodeStory uses [Agent Plugins 1.0](https://code.visualstudio.com/docs/agents/reference/agent-plugin-reference#_plugin-manifest-pluginjson). The [manifest](plugin.json) declares the 1.0 schema; skills are discovered from `skills/`, hosted MCP servers from `mcp.json`, and Copilot-specific instructions from [com.github.copilot/rules](com.github.copilot/rules).
+
+All six shared instruction files live only in that rules directory: design principles, documentation, environment variables, Python logging, performance and async safety, and Python coding standards. Their contents and existing frontmatter are unchanged. They are plugin components, not repository-discovered `.github/instructions/` files, and do not require copying into the target workspace.
+
+Use an Agent Plugins 1.0-capable Copilot client with CodeStory enabled. Rule activation depends on the selected harness and each file's `applyTo` patterns or supported task-relevance behavior; discovery alone does not prove inclusion. Apply relevant bundled rules alongside the target repository's instructions, and surface conflicts rather than silently overriding either source. See [development verification](#development-verification).
+
 ## MCP servers
 
-The [plugin manifest](plugin.json) loads [.mcp.json](.mcp.json), which bundles the official hosted servers below using Streamable HTTP. No Node.js, Docker, environment variables, or credentials in repository files are required for these connections. Authentication is managed by the client through browser sign-in; service access and organization policies still apply.
+The client automatically discovers [mcp.json](mcp.json), which declares the Agent Plugins 1.0 MCP schema and bundles the official hosted servers below using the standard `streamable-http` transport. Server names and endpoints are unchanged. No Node.js, Docker, environment variables, or credentials in repository files are required for these connections. Authentication is managed by the client through browser sign-in; service access and organization policies still apply.
 
 | Server name | Provider and setup guide | Endpoint | Required access |
 | --- | --- | --- | --- |
@@ -112,9 +120,17 @@ The implementer turns the approved architecture and delivery sequence into concr
 
 ```text
 code-story/
-├── plugin.json                                  # Plugin manifest, skills, and MCP configuration path
-├── .mcp.json                                    # Hosted GitHub, Azure DevOps, and Atlassian servers
+├── plugin.json                                  # Agent Plugins 1.0 manifest
+├── mcp.json                                     # Agent Plugins 1.0 hosted MCP definitions
 ├── README.md                                    # Plugin overview, installation, and usage
+├── com.github.copilot/
+│   └── rules/                                   # All shared instructions; no duplicate collection
+│       ├── design-principal.instructions.md
+│       ├── documentation.instructions.md
+│       ├── environment-variables.instructions.md
+│       ├── logging-and-exceptions.instructions.md
+│       ├── performance.instructions.md
+│       └── python.instructions.md
 └── skills/
     ├── code-story-work-item-search/
     │   ├── SKILL.md                             # Provider-agnostic, chat-only remote search
@@ -138,15 +154,30 @@ code-story/
 
 ## Development verification
 
-There is no automated test suite for this plugin. After installation or update, check that Copilot CLI discovers its bundled MCP definitions:
+There is no automated test suite for this plugin. Validate [plugin.json](plugin.json) and [mcp.json](mcp.json) against their declared official JSON schemas when changing packaging.
+
+For local, read-only plugin and skill discovery checks, run these from the plugin directory with a Copilot CLI version that supports `--plugin-dir`:
+
+```sh
+copilot --plugin-dir . plugin list --json
+copilot --plugin-dir . skill list --json
+```
+
+Confirm that CodeStory is enabled and its skills are listed with a plugin source. These checks do not prove instruction inclusion.
+
+In the tested Copilot CLI 1.0.103-0, `instruction list --json` returned an empty list for both a local plugin mount and an isolated installed copy, even though all six rule files were packaged. The command also excludes host-projected instructions. Do not treat it as proof of VS Code Copilot harness behavior; verify rule inclusion in the intended harness as described below.
+
+After installation or update, check the bundled MCP definitions:
 
 ```sh
 copilot mcp list --json
 ```
 
-For local development, run `copilot plugin install .` from this plugin's directory first, preferably with `COPILOT_HOME` pointing to a separate test directory. Reinstall after edits because direct installations are cached. A temporary `--plugin-dir` mount is not included in `mcp list` by every CLI version.
+Use **Chat: Install Plugin from Source** in VS Code to install the local plugin directory. For CLI local installs, follow `copilot plugin install --help` for the installed version, preferably with `COPILOT_HOME` pointing to a separate test directory. Reinstall cached direct installations after edits. A temporary `--plugin-dir` mount is not included in `mcp list` by every CLI version.
 
 Confirm that all three CodeStory servers are listed with a plugin source. This checks configuration discovery, not a live authenticated connection; use the read-only lookup above to verify access.
+
+To verify rule inclusion in VS Code, select the **Copilot** harness, enable the local CodeStory plugin, and start a fresh chat. Use a task matching a rule's scope, then inspect Agent Debug Logs for the rule path/content and check that the result follows it. Repeat in a new chat with the plugin disabled. A plugin loaded from a local directory is not restricted to the Local harness. Files without automatic activation in the selected client must be attached explicitly.
 
 ## License
 
