@@ -35,6 +35,19 @@
         "implementation",
         "code"
       ]
+    },
+    {
+      "name": "cu-studio",
+      "description": "CU Studio provides Azure AI Content Understanding skills for editing analyzer JSON and verifying extraction results against source PDFs.",
+      "version": "0.1.0",
+      "source": "plugins/cu-studio",
+      "keywords": [
+        "azure",
+        "content-understanding",
+        "cu",
+        "analyzers",
+        "multimodal"
+      ]
     }
   ]
 }

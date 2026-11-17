@@ -1,0 +1,17 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "cu-studio",
+  "description": "CU Studio provides Azure AI Content Understanding skills for editing analyzer JSON and verifying extraction results against source PDFs.",
+  "version": "0.1.0",
+  "author": {
+    "name": "krprashantpk"
+  },
+  "license": "MIT",
+  "keywords": [
+    "azure",
+    "content-understanding",
+    "cu",
+    "analyzers",
+    "multimodal"
+  ]
+}
