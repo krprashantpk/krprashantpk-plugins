@@ -59,7 +59,7 @@ For an existing installation, run `/plugin update code-story`, then start a new 
 
 CodeStory uses [Agent Plugins 1.0](https://code.visualstudio.com/docs/agents/reference/agent-plugin-reference#_plugin-manifest-pluginjson). The [manifest](plugin.json) declares the 1.0 schema; skills are discovered from `skills/`, hosted MCP servers from `mcp.json`, and Copilot-specific instructions from [com.github.copilot/rules](com.github.copilot/rules).
 
-All six shared instruction files live only in that rules directory: design principles, documentation, environment variables, Python logging, performance and async safety, and Python coding standards. Their contents and existing frontmatter are unchanged. They are plugin components, not repository-discovered `.github/instructions/` files, and do not require copying into the target workspace.
+All seven shared instruction files live only in that rules directory: design principles, documentation, environment variables, Python logging, performance and async safety, Python coding standards, and [Python transient-failure retries](com.github.copilot/rules/python-retries.instructions.md). They are plugin components, not repository-discovered `.github/instructions/` files, and do not require copying into the target workspace.
 
 Use an Agent Plugins 1.0-capable Copilot client with CodeStory enabled. Rule activation depends on the selected harness and each file's `applyTo` patterns or supported task-relevance behavior; discovery alone does not prove inclusion. Apply relevant bundled rules alongside the target repository's instructions, and surface conflicts rather than silently overriding either source. See [development verification](#development-verification).
 
@@ -130,7 +130,9 @@ code-story/
 │       ├── environment-variables.instructions.md
 │       ├── logging-and-exceptions.instructions.md
 │       ├── performance.instructions.md
-│       └── python.instructions.md
+│       ├── python-retries.instructions.md
+│       ├── python.instructions.md
+│       └── security.instructions.md
 └── skills/
     ├── code-story-work-item-search/
     │   ├── SKILL.md                             # Provider-agnostic, chat-only remote search
